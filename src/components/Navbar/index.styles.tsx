@@ -2,17 +2,24 @@ import styled from "styled-components";
 import {
   GREY_PRIMARY_COLOR,
   BLACK_PRIMARY_HOVER,
-  BLACK_PRIMARY_LIGHTER
+  BLACK_PRIMARY_LIGHTER,
+  CONTAINER_WIDTH
 } from "constants/styles";
 import { Link } from "react-router-dom";
 
-export const HeaderContainer = styled.div`
+export const Background = styled.div`
+  background-color: ${GREY_PRIMARY_COLOR};
+`;
+
+export const NavbarContainer = styled.div`
   display: flex;
   flex-direction: row;
-  background-color: ${GREY_PRIMARY_COLOR};
+
   padding: 0.5rem 3rem;
   align-items: center;
   justify-content: space-between;
+  max-width: ${CONTAINER_WIDTH};
+  margin: 0 auto;
 `;
 
 export const Brand = styled.div`
