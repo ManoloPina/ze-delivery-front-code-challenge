@@ -8,6 +8,7 @@ import {
   Redirect
 } from "react-router-dom";
 import { HOME, PRODUCTS } from "constants/routes";
+import Home from "pages/Home";
 
 interface Props {}
 
@@ -16,7 +17,7 @@ const App: React.FC<Props> = () => (
     <Router>
       <Navbar />
       <Switch>
-        <Route path={HOME} exact />
+        <Route path={HOME} component={Home} exact />
         <Route path={PRODUCTS} />
         <Redirect to={HOME} />
       </Switch>
