@@ -1,7 +1,6 @@
 import React from "react";
 import * as S from "./index.styles";
 import { HOME, PRODUCTS } from "constants/routes";
-import { Container } from "styles";
 
 interface Props {}
 
@@ -10,7 +9,7 @@ const Navbar: React.FC<Props> = () => {
     <S.Background>
       <S.NavbarContainer>
         <S.Brand>
-          <img src="public/assets/images/logo.png" />
+          <img src="assets/images/logo.png" />
         </S.Brand>
         <S.NavItems>
           <S.NavItem to={HOME}>Home</S.NavItem>
