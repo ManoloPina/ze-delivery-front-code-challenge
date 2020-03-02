@@ -1,81 +1,42 @@
-import React, { useState, SyntheticEvent } from "react";
-import { usePosition } from "shared/customHooks";
+import React, { useState, useEffect } from "react";
 import * as S from "./index.styles";
 import { Container } from "styles";
 import Search from "components/Search";
-import axios from "axios";
+import {
+  useAddressPredictions,
+  useGeoPosition,
+  useProducts,
+  usePOC
+} from "shared/customHooks";
+import List from "components/List";
 import { API } from "constants/index";
+import axios from "axios";
+import { RouteChildrenProps } from "react-router-dom";
+import { PRODUCTS } from "constants/routes";
 
-const Home: React.FC = () => {
-  const { latitude, longitude, error } = usePosition();
+interface Props extends RouteChildrenProps {}
+
+const Home: React.FC<Props> = ({ history, ...props }) => {
   const [search, setSearch] = useState<string>("");
+  const [address, setAddress] = useState<string>("");
+  const predictions = useAddressPredictions(search);
+  const [position, loading, error] = useGeoPosition(address);
+  const [poc, pocLoading, pocError, setPoc] = usePOC(position);
+
   const onChangeSearch = (event: any) => {
     const value = event.target.value;
     setSearch(value);
   };
-  const handleSearch = async () => {
-    if (search && search.length >= 3) {
-      let res = await axios.post(API, {
-        query: `query pocSearchMethod($now: DateTime!, $algorithm: String!, $lat: String!, $long: String!) {
-          pocSearch(now: $now, algorithm: $algorithm, lat: $lat, long: $long) {
-            __typename
-            id
-            status
-            tradingName
-            officialName
-            deliveryTypes {
-              __typename
-              pocDeliveryTypeId
-              deliveryTypeId
-              price
-              title
-              subtitle
-              active
-            }
-            paymentMethods {
-              __typename
-              pocPaymentMethodId
-              paymentMethodId
-              active
-              title
-              subtitle
-            }
-            pocWorkDay {
-              __typename
-              weekDay
-              active
-              workingInterval {
-                __typename
-                openingTime
-                closingTime
-              }
-            }
-            address {
-              __typename
-              address1
-              address2
-              number
-              city
-              province
-              zip
-              coordinates
-            }
-            phone {
-              __typename
-              phoneNumber
-            }
-          }
-        }
-        `,
-        variables: {
-          algorithm: search,
-          lat: latitude,
-          long: longitude,
-          now: new Date()
-        }
-      });
+
+  const handleSelected = (item: any) => setAddress(item);
+
+  useEffect(() => {
+    if (poc && poc.length > 0) {
+      const [{ id }] = poc;
+      history.push(`${PRODUCTS}/${id}`);
     }
-  };
+  }, [poc]);
+
   return (
     <Container>
       <h2>Find the nearest POC</h2>
@@ -83,8 +44,11 @@ const Home: React.FC = () => {
         <Search
           value={search}
           onChange={onChangeSearch}
-          handleSearch={handleSearch}
+          handleSearch={() => {}}
         />
+        {search.length > 3 && (
+          <List items={predictions} handleSelected={handleSelected} />
+        )}
       </S.HomeContainer>
     </Container>
   );

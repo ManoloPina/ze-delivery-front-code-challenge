@@ -12,7 +12,6 @@ const Search: React.FC<Props> = ({ value, onChange, handleSearch }) => {
     <S.SearchContainer>
       <S.InputGroup>
         <input type="text" name="search" value={value} onChange={onChange} />
-        <S.Button onClick={handleSearch}>Search</S.Button>
       </S.InputGroup>
     </S.SearchContainer>
   );
