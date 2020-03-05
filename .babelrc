@@ -1,0 +1,15 @@
+{
+  "presets": [
+    ["@babel/preset-env", { "useBuiltIns": false }],
+    "@babel/preset-typescript",
+    "@babel/preset-react"
+  ],
+  "plugins": [
+    ["@babel/plugin-proposal-decorators", { "legacy": true }],
+    ["@babel/proposal-class-properties", { "loose": true }],
+    "@babel/proposal-object-rest-spread",
+    "babel-plugin-styled-components",
+    "@babel/plugin-transform-runtime",
+    "react-html-attrs"
+  ]
+}
