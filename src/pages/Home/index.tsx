@@ -5,12 +5,9 @@ import Search from "components/Search";
 import {
   useAddressPredictions,
   useGeoPosition,
-  useProducts,
   usePOC
 } from "shared/customHooks";
 import List from "components/List";
-import { API } from "constants/index";
-import axios from "axios";
 import { RouteChildrenProps } from "react-router-dom";
 import { PRODUCTS } from "constants/routes";
 
@@ -19,8 +16,13 @@ interface Props extends RouteChildrenProps {}
 const Home: React.FC<Props> = ({ history, ...props }) => {
   const [search, setSearch] = useState<string>("");
   const [address, setAddress] = useState<string>("");
-  const predictions = useAddressPredictions(search);
-  const [position, loading, error] = useGeoPosition(address);
+  const [
+    predictions,
+    loadingPredictions,
+    errorPredictions,
+    setPredictions
+  ] = useAddressPredictions(search);
+  const [position, loadingPosition, errorPosition] = useGeoPosition(address);
   const [poc, pocLoading, pocError, setPoc] = usePOC(position);
 
   const onChangeSearch = (event: any) => {
@@ -28,7 +30,10 @@ const Home: React.FC<Props> = ({ history, ...props }) => {
     setSearch(value);
   };
 
-  const handleSelected = (item: any) => setAddress(item);
+  const handleSelected = (item: any) => {
+    setAddress(item);
+    setPredictions([]);
+  };
 
   useEffect(() => {
     if (poc && poc.length > 0) {
@@ -46,7 +51,9 @@ const Home: React.FC<Props> = ({ history, ...props }) => {
           onChange={onChangeSearch}
           handleSearch={() => {}}
         />
-        {search.length > 3 && (
+        {loadingPredictions ? (
+          <span>Loading...</span>
+        ) : (
           <List items={predictions} handleSelected={handleSelected} />
         )}
       </S.HomeContainer>

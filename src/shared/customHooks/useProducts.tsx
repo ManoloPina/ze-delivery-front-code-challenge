@@ -1,8 +1,18 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { API } from "constants/index";
+import { Product } from "types/Product";
 
-type Hook = (id: string, search?: string, categoryId?: string) => any[];
+type Hook = (
+  id: string,
+  search?: string,
+  categoryId?: string
+) => [
+  Product[],
+  boolean,
+  boolean,
+  (id: string, search?: string, categoryId?: string) => void
+];
 
 export const useProducts: Hook = (id, search, categoryId) => {
   const [products, setProducts] = useState<any[]>([]);
@@ -15,6 +25,7 @@ export const useProducts: Hook = (id, search, categoryId) => {
     categoryId: string | null = null
   ) => {
     try {
+      console.log("id:", id);
       setLoading(true);
       if (id) {
         let res = await axios.post(API, {
@@ -62,7 +73,6 @@ export const useProducts: Hook = (id, search, categoryId) => {
           }
         });
         const products = res.data.data.poc.products;
-
         setProducts(products);
       }
 
@@ -77,5 +87,5 @@ export const useProducts: Hook = (id, search, categoryId) => {
     fetchProducts(id, search, categoryId);
   }, [id, search, categoryId]);
 
-  return products;
+  return [products, loading, error, fetchProducts];
 };

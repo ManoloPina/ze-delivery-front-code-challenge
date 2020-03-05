@@ -1,8 +1,14 @@
 import React, { useRef, useEffect, useState, useCallback } from "react";
 import { debounce } from "lodash";
 
-export const useAddressPredictions = (input: string) => {
+type Hook = (
+  input: string
+) => [string[], boolean, boolean, (predictions: string[]) => void];
+
+export const useAddressPredictions: Hook = (input: string) => {
   const [predictions, setPredictions] = useState<string[]>([]);
+  const [error, setError] = useState<boolean>(false);
+  const [loading, setLoading] = useState<boolean>(false);
   const autocomplete = useRef<google.maps.places.AutocompleteService>();
 
   if (!autocomplete.current) {
@@ -11,8 +17,10 @@ export const useAddressPredictions = (input: string) => {
 
   const getPlacePredictions = (input: string) => {
     if (input.length > 3 && autocomplete.current !== undefined) {
+      setLoading(true);
       autocomplete.current.getPlacePredictions({ input }, predictions => {
         setPredictions(predictions.map(prediction => prediction.description));
+        setLoading(false);
       });
     }
   };
@@ -26,5 +34,5 @@ export const useAddressPredictions = (input: string) => {
     debouncePlacePredictions(input);
   }, [input]);
 
-  return predictions;
+  return [predictions, loading, error, setPredictions];
 };

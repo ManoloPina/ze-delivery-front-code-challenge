@@ -20,9 +20,6 @@ const App: React.FC<Props> = () => (
       <Switch>
         <Route path={HOME} component={Home} exact />
         <Route path={`${PRODUCTS}/:pocId`} component={Products} />
-        <Route path="/list/:id">
-          <h1>List</h1>
-        </Route>
         <Redirect to={HOME} />
       </Switch>
     </Router>

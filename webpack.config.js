@@ -39,5 +39,11 @@ module.exports = {
     port: 3000,
     historyApiFallback: true,
     publicPath: "/"
+  },
+  devtool: "cheap-module-source-map",
+  optimization: {
+    splitChunks: {
+      chunks: "all"
+    }
   }
 };
