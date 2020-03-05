@@ -1,29 +1,44 @@
 import React, { useState, useEffect } from "react";
+import axios from "axios";
+import { MAPS_KEY } from "constants/index";
 
-export const usePosition = () => {
-  const [position, setPosition] = useState<{
-    latitude: number;
-    longitude: number;
-  }>({ latitude: 0, longitude: 0 });
-  const [error, setError] = useState<string | null>(null);
+interface Position {
+  lat: string | null;
+  lng: string | null;
+}
 
-  const onChange = ({ coords: { latitude, longitude } }: Position) => {
-    setPosition({ longitude, latitude });
-  };
+type Hook = (address: string) => [Position, boolean, boolean];
 
-  const onError = (error: PositionError) => {
-    setError(error.message);
+export const useGeoPosition: Hook = (address: string) => {
+  const [position, setPosition] = useState<Position>({ lat: null, lng: null });
+  const [error, setError] = useState<boolean>(false);
+  const [loading, setLoading] = useState<boolean>(false);
+
+  const fetchPosition = async () => {
+    try {
+      setLoading(true);
+
+      const res = await axios.get(
+        `https://maps.googleapis.com/maps/api/geocode/json?address=${address}&key=${MAPS_KEY}`
+      );
+
+      const result: Position = res.data.results[0].geometry.location;
+
+      if (result.lat !== null && result.lng !== null) {
+        setPosition({ lat: result.lat, lng: result.lng });
+      } else {
+        setError(true);
+      }
+      setLoading(false);
+    } catch (error) {
+      setLoading(false);
+      setError(false);
+    }
   };
 
   useEffect(() => {
-    const geo = navigator.geolocation;
-    if (!geo) {
-      setError("Geolocation isn't supported");
-      return;
-    }
-    const watcher = geo.watchPosition(onChange, onError);
-    return () => geo.clearWatch(watcher);
-  }, []);
+    fetchPosition();
+  }, [address]);
 
-  return { ...position, error };
+  return [position, loading, error];
 };

@@ -1,3 +1,6 @@
-import { usePosition } from "./useGeoPosition";
+import { useGeoPosition } from "./useGeoPosition";
+import { useAddressPredictions } from "./useAddressPredictions";
+import { useProducts } from "./useProducts";
+import { usePOC } from "./usePOC";
 
-export { usePosition };
+export { useGeoPosition, useAddressPredictions, useProducts, usePOC };

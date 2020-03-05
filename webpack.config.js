@@ -1,10 +1,13 @@
 const path = require("path");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
+const CopyWebpackPlugin = require("copy-webpack-plugin");
 module.exports = {
-  entry: "./src/index",
+  entry: "./src/index.tsx",
   output: {
-    path: path.join(__dirname, "/dist"),
-    filename: "bundle.js"
+    path: path.resolve(__dirname, "..", "build"),
+    filename: "[name].js",
+    chunkFilename: "[name].chunk.js",
+    publicPath: "/"
   },
 
   resolve: {
@@ -29,6 +32,18 @@ module.exports = {
   plugins: [
     new HtmlWebpackPlugin({
       template: "./src/index.html"
-    })
-  ]
+    }),
+    new CopyWebpackPlugin([{ from: "public" }])
+  ],
+  devServer: {
+    port: 3000,
+    historyApiFallback: true,
+    publicPath: "/"
+  },
+  devtool: "cheap-module-source-map",
+  optimization: {
+    splitChunks: {
+      chunks: "all"
+    }
+  }
 };
